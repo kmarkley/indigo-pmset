@@ -1,22 +1,6 @@
 #!/usr/bin/env python2.5
 
-import os
-import subprocess
-
-from collections import namedtuple
-from xml.dom import minidom
-
-PowerInfo = namedtuple('PowerInfo', ['source', 'isExternal'])
-BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'isCharging'])
-
-# pmset -g batt
-#
-# Now drawing from 'AC Power'
-#  -InternalBattery-0	100%; charged; 0:00 remaining present: true
-#
-# Now drawing from 'Battery Power'
-#  -InternalBattery-0	100%; discharging; (no estimate) present: true
-#  -UPS CP600	100%; charging present: true
+import pmset
 
 ################################################################################
 class Plugin(indigo.PluginBase):
@@ -42,7 +26,7 @@ class Plugin(indigo.PluginBase):
     #---------------------------------------------------------------------------
     def deviceStartComm(self, device):
         self.debugLog('Starting device: %s' % device.name)
-        #TODO update device level
+        #TODO update device level?
 
     #---------------------------------------------------------------------------
     def deviceStopComm(self, device):
@@ -63,16 +47,6 @@ class Plugin(indigo.PluginBase):
         self.pluginPrefs['debug'] = self.debug
 
     #---------------------------------------------------------------------------
-    def runTestCases(self):
-        doc = minidom.parse('test_cases.xml')
-        tests = doc.getElementsByTagName('TestCase')
-
-        for tc in tests:
-            name = tc.attributes['name'].value
-            value = tc.firstChild.nodeValue.strip()
-            self._testCommandParsing(name, value)
-
-    #---------------------------------------------------------------------------
     def runConcurrentThread(self):
         while True:
             # update once then go to sleep
@@ -88,34 +62,6 @@ class Plugin(indigo.PluginBase):
     def _update(self):
         self.debugLog('Updating power status')
 
-        self._getPowerInfo()
-
-    #---------------------------------------------------------------------------
-    def _getPowerInfo(self):
-        proc = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
-        rawOutput = proc.communicate()[0]
-        return self._parsePowerInfo(rawOutput)
-
-    #---------------------------------------------------------------------------
-    def _parsePowerInfo(self, rawOutput):
-        # TODO error checking
-
-        rawLines = rawOutput.splitlines()
-
-        powerLine = rawLines.pop(0)
-        self.debugLog(powerLine)
-
-        source = powerLine.split("'")[1]
-        external = 'AC' in source and not 'Battery' in source
-
-        return PowerInfo(source=source, isExternal=external)
-
-    #---------------------------------------------------------------------------
-    def _testCommandParsing(self, name, raw):
-        indigo.server.log('--BEGIN TEST: %s--' % name)
-
-        power = self._parsePowerInfo(raw)
-        indigo.server.log(str(power))
-
-        indigo.server.log('--END TEST: %s--' % name)
+        power = pmset.getCurrentPowerInfo()
+        self.debugLog('Power source: %s' % power.source)
 
