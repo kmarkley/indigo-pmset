@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.5
 
+import re
 import subprocess
 
 from xml.dom import minidom
@@ -17,21 +18,25 @@ def getCurrentPowerInfo():
 
 ################################################################################
 def _parsePowerInfo(rawOutput):
-    # TODO error checking
-
     rawLines = rawOutput.splitlines()
     powerLine = rawLines.pop(0)
 
-    source = powerLine.split("'")[1]
-    external = 'AC' in source and not 'Battery' in source
+    match = re.search('["\'](.+)["\']', powerLine)
+    if not match: return None
+
+    source = match.group(1)
+    external = 'AC' in source
 
     return PowerInfo(source=source, isExternal=external)
 
 ################################################################################
 def _printPowerInfo(power):
-    print('Power source: %s [%s]' % (
-        power.source, 'external' if power.isExternal else 'internal'
-    ))
+    if power:
+        print('Power source: %s [%s]' % (
+            power.source, 'external' if power.isExternal else 'internal'
+        ))
+    else:
+        print('None')
 
 ################################################################################
 def _runTestCase(tc):
