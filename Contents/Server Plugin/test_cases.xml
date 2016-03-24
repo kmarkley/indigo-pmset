@@ -1,37 +1,37 @@
 <?xml version="1.0"?>
 
 <TestCases>
-  <TestCase name="Laptop, AC, full">
+  <TestCase id="1" name="Laptop, AC, full">
 Now drawing from 'AC Power'
  -InternalBattery-0	100%; charged; 0:00 remaining present: true
   </TestCase>
 
-  <TestCase name="Laptop, Battery, discharging">
+  <TestCase id="2" name="Laptop, Battery, discharging">
 Now drawing from 'Battery Power'
  -InternalBattery-0	100%; discharging; (no estimate) present: true
   </TestCase>
 
-  <TestCase name="Laptop, Battery, not charging">
+  <TestCase id="3" name="Laptop, Battery, not charging">
 Now drawing from 'Battery Power'
  -InternalBattery-0	91%; AC attached; not charging present: true
   </TestCase>
 
-  <TestCase name="Laptop, Battery, discharging">
+  <TestCase id="4" name="Laptop, Battery, discharging">
 Now drawing from 'Battery Power'
  -InternalBattery-0	96%; discharging; 5:13 remaining present: true
   </TestCase>
 
-  <TestCase name="Laptop, Battery, charging">
+  <TestCase id="5" name="Laptop, Battery, charging">
 Now drawing from 'Battery Power'
  -InternalBattery-0	92%; charging; 0:45 remaining present: true
   </TestCase>
 
-  <TestCase name="UPS, AC, full">
+  <TestCase id="6" name="UPS, AC, full">
 Now drawing from 'AC Power'
  -UPS CP600	100%; charging present: true
   </TestCase>
 
-  <TestCase name="Laptop/UPS, AC, full">
+  <TestCase id="7" name="Laptop/UPS, AC, full">
 Now drawing from 'AC Power'
  -InternalBattery-0	100%; charged; 0:00 remaining present: true
  -UPS CP600	100%; charging present: true

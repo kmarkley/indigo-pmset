@@ -28,30 +28,42 @@ def _parsePowerInfo(rawOutput):
     return PowerInfo(source=source, isExternal=external)
 
 ################################################################################
+def _printPowerInfo(power):
+    print('Power source: %s [%s]' % (
+        power.source, 'external' if power.isExternal else 'internal'
+    ))
+
+################################################################################
+def _runTestCase(tc):
+    id = tc.attributes['id'].value
+    name = tc.attributes['name'].value
+    rawOutput = tc.firstChild.nodeValue.strip()
+
+    print('--BEGIN TEST [%s]: %s--' % (id, name))
+
+    power = _parsePowerInfo(rawOutput)
+    _printPowerInfo(power)
+
+################################################################################
 ## TEST ENTRY
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='pmset test interface.')
     parser.add_argument('-c', '--current', action='store_true')
-    parser.add_argument('-t', '--test', action='store_true')
+    parser.add_argument('-a', '--all', action='store_true')
+    parser.add_argument('tests', metavar='id', type=str, nargs='*', help='test case id')
     args = parser.parse_args()
+
+    doc = minidom.parse('test_cases.xml')
+    tests = doc.getElementsByTagName('TestCase')
 
     if args.current:
         print('--CURRENT POWER INFO--')
-        power = getCurrentPowerInfo()
-        print(str(power))
+        _printPowerInfo(getCurrentPowerInfo())
 
-    if args.test:
-        doc = minidom.parse('test_cases.xml')
-        tests = doc.getElementsByTagName('TestCase')
-
-        for tc in tests:
-            name = tc.attributes['name'].value
-            rawOutput = tc.firstChild.nodeValue.strip()
-
-            print('--BEGIN TEST: %s--' % name)
-
-            power = _parsePowerInfo(rawOutput)
-            print(str(power))
+    for tc in tests:
+        id = tc.attributes['id'].value
+        if args.all or id in args.tests:
+            _runTestCase(tc)
 
