@@ -9,7 +9,7 @@
     <key>IwsApiVersion</key>
     <string>1.0.0</string>
     <key>CFBundleDisplayName</key>
-    <string>Power Manager</string>
+    <string>Power Source</string>
     <key>CFBundleIdentifier</key>
     <string>com.heddings.indigo.pmset</string>
     <key>CFBundleVersion</key>
