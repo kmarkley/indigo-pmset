@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<MenuItems>
+  <MenuItem id="refreshPowerStatus">
+    <Name>Update Status</Name>
+    <CallbackMethod>refreshPowerStatus</CallbackMethod>
+  </MenuItem>
+  <MenuItem id="toggleDebugging">
+    <Name>Toggle Debugging</Name>
+    <CallbackMethod>toggleDebugging</CallbackMethod>
+  </MenuItem>
+</MenuItems>

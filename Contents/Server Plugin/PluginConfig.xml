@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<PluginConfig>
+  <SupportURL>https://github.com/jheddings/indigo-pmset</SupportURL>
+
+  <Field type="menu" id="updateInterval" defaultValue="5">
+  <Label>Update Interval:</Label>
+    <List>
+      <Option value="1">1 Minute</Option>
+      <Option value="2">2 Minutes</Option>
+      <Option value="5">5 Minutes</Option>
+      <Option value="10">10 Minutes</Option>
+      <Option value="15">15 Minutes</Option>
+      <Option value="30">30 Minutes</Option>
+      <Option value="60">1 Hour</Option>
+    </List>
+  </Field>
+
+  <Field id="separator1" type="separator" />
+
+  <Field type="checkbox" id="debug">
+    <Label>Enable debugging:</Label>
+  </Field>
+</PluginConfig>
