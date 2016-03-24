@@ -16,25 +16,8 @@ class Plugin(indigo.PluginBase):
         indigo.PluginBase.__del__(self)
 
     #---------------------------------------------------------------------------
-    def startup(self):
-        self.debugLog('-- Plugin STARTUP --')
-
-    #---------------------------------------------------------------------------
-    def shutdown(self):
-        self.debugLog('-- Plugin SHUTDOWN --')
-
-    #---------------------------------------------------------------------------
-    def deviceStartComm(self, device):
-        self.debugLog('Starting device: %s' % device.name)
-        #TODO update device level?
-
-    #---------------------------------------------------------------------------
-    def deviceStopComm(self, device):
-        self.debugLog('Stopping device: %s' % device.name)
-
-    #---------------------------------------------------------------------------
     def refreshPowerStatus(self):
-        power = self._getPowerInfo()
+        power = pmset.getCurrentPowerInfo()
 
         indigo.server.log('Power source: %s [%s]' % (
             power.source,

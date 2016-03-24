@@ -1,7 +1,6 @@
 #!/usr/bin/env python2.5
 
 import subprocess
-import argparse
 
 from xml.dom import minidom
 from collections import namedtuple
@@ -31,6 +30,8 @@ def _parsePowerInfo(rawOutput):
 ################################################################################
 ## TEST ENTRY
 if __name__ == "__main__":
+    import argparse
+
     parser = argparse.ArgumentParser(description='pmset test interface.')
     parser.add_argument('-c', '--current', action='store_true')
     parser.add_argument('-t', '--test', action='store_true')
