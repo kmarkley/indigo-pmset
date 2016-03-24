@@ -8,4 +8,9 @@
     <Name>Toggle Debugging</Name>
     <CallbackMethod>toggleDebugging</CallbackMethod>
   </MenuItem>
+
+  <MenuItem id="runTestCases">
+    <Name>Run Test Cases</Name>
+    <CallbackMethod>runTestCases</CallbackMethod>
+  </MenuItem>
 </MenuItems>

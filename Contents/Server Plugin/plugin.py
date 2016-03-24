@@ -4,6 +4,7 @@ import os
 import subprocess
 
 from collections import namedtuple
+from xml.dom import minidom
 
 PowerInfo = namedtuple('PowerInfo', ['source', 'isExternal'])
 BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'isCharging'])
@@ -49,7 +50,7 @@ class Plugin(indigo.PluginBase):
 
     #---------------------------------------------------------------------------
     def refreshPowerStatus(self):
-        power = self._update()
+        power = self._getPowerInfo()
 
         indigo.server.log('Power source: %s [%s]' % (
             power.source,
@@ -62,9 +63,18 @@ class Plugin(indigo.PluginBase):
         self.pluginPrefs['debug'] = self.debug
 
     #---------------------------------------------------------------------------
+    def runTestCases(self):
+        doc = minidom.parse('test_cases.xml')
+        tests = doc.getElementsByTagName('TestCase')
+
+        for tc in tests:
+            name = tc.attributes['name'].value
+            value = tc.firstChild.nodeValue.strip()
+            self._testCommandParsing(name, value)
+
+    #---------------------------------------------------------------------------
     def runConcurrentThread(self):
         while True:
-
             # update once then go to sleep
             self._update()
 
@@ -78,11 +88,19 @@ class Plugin(indigo.PluginBase):
     def _update(self):
         self.debugLog('Updating power status')
 
+        self._getPowerInfo()
+
+    #---------------------------------------------------------------------------
+    def _getPowerInfo(self):
         proc = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
         rawOutput = proc.communicate()[0]
-        rawLines = rawOutput.splitlines()
+        return self._parsePowerInfo(rawOutput)
 
+    #---------------------------------------------------------------------------
+    def _parsePowerInfo(self, rawOutput):
         # TODO error checking
+
+        rawLines = rawOutput.splitlines()
 
         powerLine = rawLines.pop(0)
         self.debugLog(powerLine)
@@ -90,7 +108,14 @@ class Plugin(indigo.PluginBase):
         source = powerLine.split("'")[1]
         external = 'AC' in source and not 'Battery' in source
 
-        power = PowerInfo(source=source, isExternal=external)
+        return PowerInfo(source=source, isExternal=external)
 
-        return power
+    #---------------------------------------------------------------------------
+    def _testCommandParsing(self, name, raw):
+        indigo.server.log('--BEGIN TEST: %s--' % name)
+
+        power = self._parsePowerInfo(raw)
+        indigo.server.log(str(power))
+
+        indigo.server.log('--END TEST: %s--' % name)
 
