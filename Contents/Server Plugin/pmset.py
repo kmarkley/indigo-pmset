@@ -11,15 +11,12 @@ BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status'])
 
 ################################################################################
 def getCurrentPowerInfo():
-    proc = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
-    rawOutput = proc.communicate()[0]
-
+    rawOutput = _pmset('batt')
     return _parsePowerInfo(rawOutput)
 
 ################################################################################
 def getBatteryInfo(name=None):
-    proc = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
-    rawOutput = proc.communicate()[0]
+    rawOutput = _pmset('batt')
 
     batts = _parseBatteryInfo(rawOutput)
     if name is None: return batts
@@ -31,11 +28,16 @@ def getBatteryInfo(name=None):
     return None
 
 ################################################################################
-def _parsePowerInfo(rawOutput):
-    rawLines = rawOutput.splitlines()
-    powerLine = rawLines.pop(0)
+def _pmset(cmd):
+    proc = subprocess.Popen(['pmset', '-g', cmd], stdout=subprocess.PIPE)
+    out, err = proc.communicate()
+    return out.strip()
 
-    match = re.search('["\'](.+)["\']', powerLine)
+################################################################################
+def _parsePowerInfo(rawOutput):
+    if rawOutput is None: return None
+
+    match = re.search('drawing\s*from\s*["\'](.+)["\']', rawOutput)
     if not match: return None
 
     power = PowerInfo(
@@ -47,13 +49,15 @@ def _parsePowerInfo(rawOutput):
 
 ################################################################################
 def _parseBatteryInfo(rawOutput):
+    if rawOutput is None: return None
+
     batts = [ ]
 
     rawLines = rawOutput.splitlines()
-    powerLine = rawLines.pop(0)
+    regex = re.compile(r'-(.+)\t(\d+)%;\s*([^;]+)')
 
     for line in rawLines:
-        match = re.search('-(.+)\t(\d+)%;\s*(.+)\s*$', line)
+        match = regex.search(line.strip())
 
         if match:
             batt = BatteryInfo(
@@ -61,7 +65,6 @@ def _parseBatteryInfo(rawOutput):
                 level = int(match.group(2)),
                 status = match.group(3)
             )
-            print (str(batt))
             batts.append(batt)
 
     return batts
@@ -72,6 +75,21 @@ def _printPowerInfo(power):
         print('Power source: %s [%s]' % (
             power.source, 'external' if power.isExternal else 'internal'
         ))
+    else:
+        print('None')
+
+################################################################################
+def _printBatteries(batts):
+    if batts and len(batts) > 0:
+        for batt in batts:
+            _printBatteryInfo(batt)
+    else:
+        print('None')
+
+################################################################################
+def _printBatteryInfo(batt):
+    if batt:
+        print(' -%s [%s%%] %s' % (batt.name, batt.level, batt.status))
     else:
         print('None')
 
@@ -87,6 +105,7 @@ def _runTestCase(tc):
     _printPowerInfo(power)
 
     batts = _parseBatteryInfo(rawOutput)
+    _printBatteries(batts)
 
 ################################################################################
 ## TEST ENTRY
@@ -105,6 +124,7 @@ if __name__ == "__main__":
     if args.current:
         print('--CURRENT POWER INFO--')
         _printPowerInfo(getCurrentPowerInfo())
+        _printBatteries(getBatteryInfo())
 
     for tc in tests:
         id = tc.attributes['id'].value
