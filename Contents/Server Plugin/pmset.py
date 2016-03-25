@@ -37,8 +37,7 @@ def _parseBatteryInfo(rawOutput):
     powerLine = rawLines.pop(0)
 
     for line in rawLines:
-        #match = re.search('-(.+)\t(\d+)%;\s*(.+);', line)
-        match = re.search('-(.+)\t(\d+)%;\s*([^;]+)', line)
+        match = re.search('-(.+)\t(\d+)%;\s*(.+)\s*$', line)
 
         if match:
             batt = BatteryInfo(
