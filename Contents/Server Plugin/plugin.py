@@ -26,7 +26,22 @@ class Plugin(indigo.PluginBase):
         self.debugLog('Stopping device: ' + device.name)
 
     #---------------------------------------------------------------------------
-    def refreshPowerStatus(self):
+    def getBatteryNameList(self, filter='', valuesDict=None, typeId='', targetId=0):
+        self.debugLog("getBatteryNameList valuesDict: %s" % str(valuesDict))
+        battNames = []
+        batts = pmset.getBatteryInfo()
+
+        if len(batts) < 1:
+            battNames.append('- No Batteries Found -')
+
+        for batt in batts:
+            battNames.append(batt.name)
+
+        return battNames
+
+    #---------------------------------------------------------------------------
+    def refreshDeviceStatus(self):
+        indigo.server.log('Updating device status.')
         self._updateAllDevices()
 
     #---------------------------------------------------------------------------
@@ -72,6 +87,25 @@ class Plugin(indigo.PluginBase):
 
         if type == 'PowerSupply':
             self._updateDevice_PowerSupply(device)
+        elif type == 'Battery':
+            self._updateDevice_Battery(device)
+
+    #---------------------------------------------------------------------------
+    def _updateDevice_Battery(self, device):
+        name = device.pluginProps['name']
+        self.debugLog('Updating battery: %s' % name)
+
+        batt = pmset.getBatteryInfo(name)
+
+        if batt is None:
+            self.errorLog('Unknown battery: %s' % name)
+
+        else:
+            self.debugLog('Battery: %s [%s] - %s' % (batt.name, batt.level, batt.status))
+            device.updateStateOnServer('level', batt.level)
+            device.updateStateOnServer('status', batt.status)
+            device.updateStateOnServer('displayStatus', '%d%%' % batt.level)
+            device.updateStateOnServer('lastUpdatedAt', time.strftime('%c'))
 
     #---------------------------------------------------------------------------
     def _updateDevice_PowerSupply(self, device):

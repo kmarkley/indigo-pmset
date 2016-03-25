@@ -39,4 +39,44 @@
 
     <UiDisplayStateId>displayStatus</UiDisplayStateId>
   </Device>
+
+  <Device type="custom" id="Battery">
+
+    <Name>Battery</Name>
+
+    <ConfigUI>
+      <Field id="name" type="menu" defaultValue="">
+        <Label>Select Battery:</Label>
+        <List class="self" method="getBatteryNameList" dynamicReload="true" />
+      </Field>
+    </ConfigUI>
+
+    <States>
+      <State id="level">
+        <ValueType>Integer</ValueType>
+        <TriggerLabel>Battery Level</TriggerLabel>
+        <ControlPageLabel>Battery Level</ControlPageLabel>
+      </State>
+
+      <State id="status">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Battery Status</TriggerLabel>
+        <ControlPageLabel>Battery Status</ControlPageLabel>
+      </State>
+
+      <State id="displayStatus">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Battery Percent</TriggerLabel>
+        <ControlPageLabel>Battery Percent</ControlPageLabel>
+      </State>
+
+      <State id="lastUpdatedAt">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Last Update</TriggerLabel>
+        <ControlPageLabel>Last Update</ControlPageLabel>
+      </State>
+    </States>
+
+    <UiDisplayStateId>displayStatus</UiDisplayStateId>
+  </Device>
 </Devices>

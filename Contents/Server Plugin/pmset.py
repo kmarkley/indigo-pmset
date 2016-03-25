@@ -17,6 +17,20 @@ def getCurrentPowerInfo():
     return _parsePowerInfo(rawOutput)
 
 ################################################################################
+def getBatteryInfo(name=None):
+    proc = subprocess.Popen(['pmset', '-g', 'batt'], stdout=subprocess.PIPE)
+    rawOutput = proc.communicate()[0]
+
+    batts = _parseBatteryInfo(rawOutput)
+    if name is None: return batts
+
+    for batt in batts:
+        if batt.name == name:
+            return batt
+
+    return None
+
+################################################################################
 def _parsePowerInfo(rawOutput):
     rawLines = rawOutput.splitlines()
     powerLine = rawLines.pop(0)
@@ -33,6 +47,8 @@ def _parsePowerInfo(rawOutput):
 
 ################################################################################
 def _parseBatteryInfo(rawOutput):
+    batts = [ ]
+
     rawLines = rawOutput.splitlines()
     powerLine = rawLines.pop(0)
 
@@ -46,6 +62,9 @@ def _parseBatteryInfo(rawOutput):
                 status = match.group(3)
             )
             print (str(batt))
+            batts.append(batt)
+
+    return batts
 
 ################################################################################
 def _printPowerInfo(power):
