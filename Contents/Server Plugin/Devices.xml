@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<Devices>
+
+  <Device type="custom" id="PowerSupply">
+
+    <Name>Power Supply</Name>
+
+    <ConfigUI>
+      <Field id="stub" type="label">
+        <Label>This device has no configuration options.</Label>
+      </Field>
+    </ConfigUI>
+
+    <States>
+      <State id="hasExternalPower">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Has Power</TriggerLabel>
+        <ControlPageLabel>Power</ControlPageLabel>
+      </State>
+
+      <State id="source">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Power Source</TriggerLabel>
+        <ControlPageLabel>Power Source</ControlPageLabel>
+      </State>
+
+      <State id="displayStatus">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Power Supply Status</TriggerLabel>
+        <ControlPageLabel>Power Supply Status</ControlPageLabel>
+      </State>
+
+      <State id="lastUpdatedAt">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Last Update</TriggerLabel>
+        <ControlPageLabel>Last Update</ControlPageLabel>
+      </State>
+    </States>
+
+    <UiDisplayStateId>displayStatus</UiDisplayStateId>
+  </Device>
+</Devices>

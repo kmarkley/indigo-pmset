@@ -1,5 +1,6 @@
 #!/usr/bin/env python2.5
 
+import time
 import pmset
 
 ################################################################################
@@ -16,13 +17,17 @@ class Plugin(indigo.PluginBase):
         indigo.PluginBase.__del__(self)
 
     #---------------------------------------------------------------------------
-    def refreshPowerStatus(self):
-        power = pmset.getCurrentPowerInfo()
+    def deviceStartComm(self, device):
+        self.debugLog('Starting device: ' + device.name)
+        self._updateDevice(device)
 
-        indigo.server.log('Power source: %s [%s]' % (
-            power.source,
-            'external' if power.isExternal else 'internal'
-        ))
+    #---------------------------------------------------------------------------
+    def deviceStopComm(self, device):
+        self.debugLog('Stopping device: ' + device.name)
+
+    #---------------------------------------------------------------------------
+    def refreshPowerStatus(self):
+        self._updateAllDevices()
 
     #---------------------------------------------------------------------------
     def toggleDebugging(self):
@@ -33,7 +38,7 @@ class Plugin(indigo.PluginBase):
     def runConcurrentThread(self):
         try:
 
-            while True:
+            while not self.stopThread:
                 self._runLoopStep()
 
         except self.StopThread:
@@ -41,19 +46,43 @@ class Plugin(indigo.PluginBase):
 
     #---------------------------------------------------------------------------
     def _runLoopStep(self):
-        # update once then go to sleep
-        self._update()
-
+        # devices are updated when added, so we'll start with a sleep
         updateInterval = int(self.pluginPrefs.get('updateInterval', 5))
         self.debugLog('Next update in %d minutes' % updateInterval)
 
         # sleep for the designated time (convert to seconds)
         self.sleep(updateInterval * 60)
 
-    #---------------------------------------------------------------------------
-    def _update(self):
-        self.debugLog('Updating power status')
+        self._updateAllDevices()
 
+    #---------------------------------------------------------------------------
+    def _updateAllDevices(self):
+        for device in indigo.devices.itervalues('self'):
+            if device.enabled:
+                self._updateDevice(device)
+            else:
+                self.debugLog('Device disabled: %s' % device.name)
+
+    #---------------------------------------------------------------------------
+    def _updateDevice(self, device):
+        self.debugLog('Update device: ' + device.name)
+
+        type = device.deviceTypeId
+        props = device.pluginProps
+
+        if type == 'PowerSupply':
+            self._updateDevice_PowerSupply(device)
+
+    #---------------------------------------------------------------------------
+    def _updateDevice_PowerSupply(self, device):
         power = pmset.getCurrentPowerInfo()
-        self.debugLog('Power source: %s' % power.source)
+
+        self.debugLog('Power source: %s [%s]' % (
+            power.source, 'external' if power.isExternal else 'internal'
+        ))
+
+        device.updateStateOnServer('source', power.source)
+        device.updateStateOnServer('hasExternalPower', power.isExternal)
+        device.updateStateOnServer('displayStatus', 'on' if power.isExternal else 'off')
+        device.updateStateOnServer('lastUpdatedAt', time.strftime('%c'))
 
