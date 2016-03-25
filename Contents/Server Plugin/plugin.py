@@ -31,15 +31,24 @@ class Plugin(indigo.PluginBase):
 
     #---------------------------------------------------------------------------
     def runConcurrentThread(self):
-        while True:
-            # update once then go to sleep
-            self._update()
+        try:
 
-            updateInterval = int(self.pluginPrefs.get('updateInterval', 5))
-            self.debugLog('Next update in %d minutes' % updateInterval)
+            while True:
+                self._runLoopStep()
 
-            # sleep for the designated time (convert to seconds)
-            self.sleep(updateInterval * 60)
+        except self.StopThread:
+            pass
+
+    #---------------------------------------------------------------------------
+    def _runLoopStep(self):
+        # update once then go to sleep
+        self._update()
+
+        updateInterval = int(self.pluginPrefs.get('updateInterval', 5))
+        self.debugLog('Next update in %d minutes' % updateInterval)
+
+        # sleep for the designated time (convert to seconds)
+        self.sleep(updateInterval * 60)
 
     #---------------------------------------------------------------------------
     def _update(self):
