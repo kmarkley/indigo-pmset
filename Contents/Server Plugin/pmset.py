@@ -48,26 +48,21 @@ def _parsePowerInfo(rawOutput):
     return power
 
 ################################################################################
+def _parseBatteryLine(line):
+    match = re.search(r'-(.+)\t(\d+)%;\s*([^;]+)', line.strip())
+    if not match: return None
+
+    return BatteryInfo(
+        name = match.group(1),
+        level = int(match.group(2)),
+        status = match.group(3)
+    )
+
+################################################################################
 def _parseBatteryInfo(rawOutput):
     if rawOutput is None: return None
-
-    batts = [ ]
-
-    rawLines = rawOutput.splitlines()
-    regex = re.compile(r'-(.+)\t(\d+)%;\s*([^;]+)')
-
-    for line in rawLines:
-        match = regex.search(line.strip())
-
-        if match:
-            batt = BatteryInfo(
-                name = match.group(1),
-                level = int(match.group(2)),
-                status = match.group(3)
-            )
-            batts.append(batt)
-
-    return batts
+    batts = map(_parseBatteryLine, rawOutput.splitlines())
+    return [batt for batt in batts if batt is not None]
 
 ################################################################################
 def _printPowerInfo(power):
