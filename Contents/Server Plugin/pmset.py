@@ -7,7 +7,7 @@ from xml.dom import minidom
 from collections import namedtuple
 
 PowerInfo = namedtuple('PowerInfo', ['source', 'isExternal'])
-BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'isCharging'])
+BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status'])
 
 ################################################################################
 def getCurrentPowerInfo():
@@ -24,10 +24,29 @@ def _parsePowerInfo(rawOutput):
     match = re.search('["\'](.+)["\']', powerLine)
     if not match: return None
 
-    source = match.group(1)
-    external = 'AC' in source
+    power = PowerInfo(
+        source = match.group(1),
+        isExternal = 'AC' in match.group(1)
+    )
 
-    return PowerInfo(source=source, isExternal=external)
+    return power
+
+################################################################################
+def _parseBatteryInfo(rawOutput):
+    rawLines = rawOutput.splitlines()
+    powerLine = rawLines.pop(0)
+
+    for line in rawLines:
+        #match = re.search('-(.+)\t(\d+)%;\s*(.+);', line)
+        match = re.search('-(.+)\t(\d+)%;\s*([^;]+)', line)
+
+        if match:
+            batt = BatteryInfo(
+                name = match.group(1),
+                level = int(match.group(2)),
+                status = match.group(3)
+            )
+            print (str(batt))
 
 ################################################################################
 def _printPowerInfo(power):
@@ -48,6 +67,8 @@ def _runTestCase(tc):
 
     power = _parsePowerInfo(rawOutput)
     _printPowerInfo(power)
+
+    batts = _parseBatteryInfo(rawOutput)
 
 ################################################################################
 ## TEST ENTRY

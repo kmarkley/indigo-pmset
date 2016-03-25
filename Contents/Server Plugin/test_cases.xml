@@ -21,8 +21,8 @@ Now drawing from 'Battery Power'
  -InternalBattery-0	96%; discharging; 5:13 remaining present: true
   </TestCase>
 
-  <TestCase id="5" name="Laptop, Battery, charging">
-Now drawing from 'Battery Power'
+  <TestCase id="5" name="Laptop, AC, charging">
+Now drawing from 'AC Power'
  -InternalBattery-0	92%; charging; 0:45 remaining present: true
   </TestCase>
 
@@ -37,9 +37,19 @@ Now drawing from 'AC Power'
  -UPS CP600	100%; charging present: true
   </TestCase>
 
-  <TestCase id="7" name="Malformed Power Line">
+  <TestCase id="8" name="Malformed Power Line">
 Now drawing from AC Power
  -InternalBattery-0	100%; charged; 0:00 remaining present: true
  -UPS CP600	100%; charging present: true
+  </TestCase>
+
+  <TestCase id="9" name="Legacy, UPS, Battery">
+Currently drawing from 'UPS Power'
+ -UPS CP600	100%; discharging; 0:37 remaining
+  </TestCase>
+
+  <TestCase id="10" name="Legacy, UPS, AC">
+Currently drawing from 'AC Power'
+ -UPS CP600	100%; charging
   </TestCase>
 </TestCases>
