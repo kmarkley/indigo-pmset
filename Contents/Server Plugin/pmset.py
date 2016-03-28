@@ -49,7 +49,7 @@ def _parsePowerInfo(rawOutput):
 
 ################################################################################
 def _parseBatteryLine(line):
-    match = re.search(r'-(.+)\t(\d+)%;\s*([^;]+)', line.strip())
+    match = re.search(r'-([^\s]+)\s+(\d+)%;\s*([^;]+)', line.strip())
     if not match: return None
 
     return BatteryInfo(
