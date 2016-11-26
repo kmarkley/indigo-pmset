@@ -52,4 +52,14 @@ Currently drawing from 'UPS Power'
 Currently drawing from 'AC Power'
  -UPS CP600	100%; charging
   </TestCase>
+
+  <TestCase id="11" name="w/ ID: On Battery">
+Now drawing from 'Battery Power'
+ -InternalBattery-0 (id=4587619)  40%; discharging; 3:03 remaining present: true
+  </TestCase>
+
+  <TestCase id="12" name="w/ ID: Charging">
+Now drawing from 'AC Power'
+ -InternalBattery-0 (id=4587619)  39%; AC attached; not charging present: true
+  </TestCase>
 </TestCases>
