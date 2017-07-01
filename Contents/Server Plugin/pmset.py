@@ -50,7 +50,7 @@ def _parsePowerInfo(rawOutput):
 
 ################################################################################
 def _parseBatteryLine(line):
-    match = re.search(r'-([^\s]+).*\b(\d+)%;\s*([^;]+); (.*) present: ([^\s]+)', line.strip())
+    match = re.search(r'-([^\s]+).*\b(\d+)%;\s*([^;]+);? ?(.*)present: ([^\s]+)', line.strip())
     if not match: return None
 
     remaining = re.search(r'([\d]+):([\d]{2})', match.group(4))
@@ -63,7 +63,7 @@ def _parseBatteryLine(line):
         name = match.group(1),
         level = int(match.group(2)),
         status = match.group(3),
-        estimate = match.group(4),
+        estimate = match.group(4).strip(),
         present = match.group(5) == "true",
         chargeMinutes = [INFINITY,minutes][match.group(3).startswith("charg")],
         dischargeMinutes = [INFINITY,minutes][match.group(3)=="discharging"],
