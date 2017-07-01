@@ -62,7 +62,7 @@ def _parseBatteryLine(line):
     return BatteryInfo(
         name = match.group(1),
         level = int(match.group(2)),
-        status = match.group(3),
+        status = match.group(3).strip(),
         estimate = match.group(4).strip(),
         present = match.group(5) == "true",
         chargeMinutes = [INFINITY,minutes][match.group(3).startswith("charg")],
