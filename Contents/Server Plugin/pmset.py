@@ -57,7 +57,10 @@ def _parseBatteryLine(line):
     if remaining:
         minutes = int(remaining.group(1))*60 + int(remaining.group(2))
     else:
-        minutes = INFINITY
+        if match.group(3).startswith("charg") and int(match.group(2)) == 100:
+            minutes = 0
+        else:
+            minutes = INFINITY
 
     return BatteryInfo(
         name = match.group(1),
