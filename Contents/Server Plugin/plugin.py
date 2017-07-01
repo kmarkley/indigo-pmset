@@ -106,6 +106,10 @@ class Plugin(indigo.PluginBase):
             device.updateStateOnServer('status', batt.status)
             device.updateStateOnServer('displayStatus', '%d%%' % batt.level)
             device.updateStateOnServer('lastUpdatedAt', time.strftime('%c'))
+            device.updateStateOnServer('estimate', batt.estimate)
+            device.updateStateOnServer('present', batt.present)
+            device.updateStateOnServer('chargeMinutes', batt.chargeMinutes)
+            device.updateStateOnServer('dischargeMinutes', batt.dischargeMinutes)
 
     #---------------------------------------------------------------------------
     def _updateDevice_PowerSupply(self, device):
@@ -119,4 +123,3 @@ class Plugin(indigo.PluginBase):
         device.updateStateOnServer('hasExternalPower', power.isExternal)
         device.updateStateOnServer('displayStatus', 'on' if power.isExternal else 'off')
         device.updateStateOnServer('lastUpdatedAt', time.strftime('%c'))
-

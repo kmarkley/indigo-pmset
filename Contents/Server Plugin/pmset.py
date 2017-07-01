@@ -7,7 +7,8 @@ from xml.dom import minidom
 from collections import namedtuple
 
 PowerInfo = namedtuple('PowerInfo', ['source', 'isExternal'])
-BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status'])
+BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status', 'estimate', 'present', 'chargeMinutes', 'dischargeMinutes'])
+INFINITY = 2**31-1 #indigo appears to only support 32-bit integers as device states, so sys.maxint won't work
 
 ################################################################################
 def getCurrentPowerInfo():
@@ -49,13 +50,23 @@ def _parsePowerInfo(rawOutput):
 
 ################################################################################
 def _parseBatteryLine(line):
-    match = re.search(r'-([^\s]+).*\b(\d+)%;\s*([^;]+)', line.strip())
+    match = re.search(r'-([^\s]+).*\b(\d+)%;\s*([^;]+); (.*) present: ([^\s]+)', line.strip())
     if not match: return None
+
+    remaining = re.search(r'([\d]+):([\d]{2})', match.group(4))
+    if remaining:
+        minutes = int(remaining.group(1))*60 + int(remaining.group(2))
+    else:
+        minutes = INFINITY
 
     return BatteryInfo(
         name = match.group(1),
         level = int(match.group(2)),
-        status = match.group(3)
+        status = match.group(3),
+        estimate = match.group(4),
+        present = match.group(5) == "true",
+        chargeMinutes = [INFINITY,minutes][match.group(3).startswith("charg")],
+        dischargeMinutes = [INFINITY,minutes][match.group(3)=="discharging"],
     )
 
 ################################################################################
@@ -125,4 +136,3 @@ if __name__ == "__main__":
         id = tc.attributes['id'].value
         if args.all or id in args.tests:
             _runTestCase(tc)
-

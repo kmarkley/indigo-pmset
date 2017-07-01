@@ -75,6 +75,30 @@
         <TriggerLabel>Last Update</TriggerLabel>
         <ControlPageLabel>Last Update</ControlPageLabel>
       </State>
+
+      <State id="estimate">
+        <ValueType>String</ValueType>
+        <TriggerLabel>Estimate</TriggerLabel>
+        <ControlPageLabel>Estimate</ControlPageLabel>
+      </State>
+
+      <State id="present">
+        <ValueType>Boolean</ValueType>
+        <TriggerLabel>Battery Present</TriggerLabel>
+        <ControlPageLabel>Batter Present</ControlPageLabel>
+      </State>
+
+      <State id="chargeMinutes">
+        <ValueType>Integer</ValueType>
+        <TriggerLabel>Charge Minutes Remaining</TriggerLabel>
+        <ControlPageLabel>Charge Minutes Remaining</ControlPageLabel>
+      </State>
+
+      <State id="dischargeMinutes">
+        <ValueType>Integer</ValueType>
+        <TriggerLabel>Discharge Minutes Remaining</TriggerLabel>
+        <ControlPageLabel>Discharge Minutes Remaining</ControlPageLabel>
+      </State>
     </States>
 
     <UiDisplayStateId>displayStatus</UiDisplayStateId>
