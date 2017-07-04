@@ -76,10 +76,10 @@
         <ControlPageLabel>Last Update</ControlPageLabel>
       </State>
 
-      <State id="estimate">
+      <State id="remaining">
         <ValueType>String</ValueType>
-        <TriggerLabel>Estimate</TriggerLabel>
-        <ControlPageLabel>Estimate</ControlPageLabel>
+        <TriggerLabel>Time Remaining</TriggerLabel>
+        <ControlPageLabel>Time Remaining</ControlPageLabel>
       </State>
 
       <State id="present">
@@ -88,16 +88,10 @@
         <ControlPageLabel>Batter Present</ControlPageLabel>
       </State>
 
-      <State id="chargeMinutes">
+      <State id="minutesLeft">
         <ValueType>Integer</ValueType>
-        <TriggerLabel>Charge Minutes Remaining</TriggerLabel>
-        <ControlPageLabel>Charge Minutes Remaining</ControlPageLabel>
-      </State>
-
-      <State id="dischargeMinutes">
-        <ValueType>Integer</ValueType>
-        <TriggerLabel>Discharge Minutes Remaining</TriggerLabel>
-        <ControlPageLabel>Discharge Minutes Remaining</ControlPageLabel>
+        <TriggerLabel>Minutes Left</TriggerLabel>
+        <ControlPageLabel>Minutes Left</ControlPageLabel>
       </State>
     </States>
 

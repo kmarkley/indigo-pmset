@@ -7,7 +7,7 @@ from xml.dom import minidom
 from collections import namedtuple
 
 PowerInfo = namedtuple('PowerInfo', ['source', 'isExternal'])
-BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status', 'estimate', 'present', 'chargeMinutes', 'dischargeMinutes'])
+BatteryInfo = namedtuple('BatteryInfo', ['name', 'level', 'status', 'remaining', 'present', 'minutesLeft'])
 INFINITY = 2**31-1 #indigo appears to only support 32-bit integers as device states, so sys.maxint won't work
 
 ################################################################################
@@ -53,23 +53,19 @@ def _parseBatteryLine(line):
     match = re.search(r'-([^\s]+).*\b(\d+)%;\s*([^;]+);? ?(.*)present: ([^\s]+)', line.strip())
     if not match: return None
 
-    remaining = re.search(r'([\d]+):([\d]{2})', match.group(4))
-    if remaining:
-        minutes = int(remaining.group(1))*60 + int(remaining.group(2))
+    estimate = re.search(r'([\d]+):([\d]{2})', match.group(4))
+    if estimate:
+        minutes = int(estimate.group(1))*60 + int(estimate.group(2))
     else:
-        if match.group(3).startswith("charg") and int(match.group(2)) == 100:
-            minutes = 0
-        else:
-            minutes = INFINITY
+        minutes = INFINITY
 
     return BatteryInfo(
         name = match.group(1),
         level = int(match.group(2)),
         status = match.group(3).strip(),
-        estimate = match.group(4).strip(),
-        present = match.group(5) == "true",
-        chargeMinutes = [INFINITY,minutes][match.group(3).startswith("charg")],
-        dischargeMinutes = [INFINITY,minutes][match.group(3)=="discharging"],
+        present = match.group(5) == 'true',
+        minutesLeft = minutes if match.group(3)=='discharging' else INFINITY,
+        remaining = match.group(4).strip() if match.group(3)=='discharging' else '(no estimate)',
     )
 
 ################################################################################
