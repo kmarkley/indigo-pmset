@@ -110,19 +110,8 @@ class Plugin(indigo.PluginBase):
             device.updateStateOnServer('present', batt.present)
             device.updateStateOnServer('minutesLeft', batt.minutesLeft)
             device.updateStateOnServer('remaining', batt.remaining)
-
-        if not device.states['present']:
-            stateImage = indigo.kStateImageSel.SensorTripped
-        elif device.states['status'] == 'discharging':
-            stateImage = indigo.kStateImageSel.TimerOn
-        elif device.states['status'] == 'charged' or device.states['level'] == 100:
-            stateImage = indigo.kStateImageSel.SensorOff
-        elif device.states['status'] == 'charging':
-            stateImage = indigo.kStateImageSel.TimerOff
-        else:
-            # oddball temporary statuses like "AC connected"
-            stateImage = indigo.kStateImageSel.AvPaused
-        device.updateStateImageOnServer(stateImage)
+            # indigo client battery level display
+            device.updateStateOnServer('batteryLevel', batt.level)
 
     #---------------------------------------------------------------------------
     def _updateDevice_PowerSupply(self, device):
