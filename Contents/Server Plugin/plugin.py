@@ -100,6 +100,7 @@ class Plugin(indigo.PluginBase):
         if batt is None:
             self.debugLog('Unknown battery: %s' % name)
             device.updateStateOnServer('present', False)
+            device.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
 
         else:
             self.debugLog('Battery: %s [%s] - %s' % (batt.name, batt.level, batt.status))
@@ -112,6 +113,16 @@ class Plugin(indigo.PluginBase):
             device.updateStateOnServer('remaining', batt.remaining)
             # indigo client battery level display
             device.updateStateOnServer('batteryLevel', batt.level)
+            # update indigo client image
+            if device.states['status'] == 'discharging':
+                stateImage = indigo.kStateImageSel.TimerOn
+            elif device.states['status'] == 'charged' or device.states['level'] == 100:
+                stateImage = indigo.kStateImageSel.SensorOn
+            elif device.states['status'] == 'charging':
+                stateImage = indigo.kStateImageSel.TimerOff
+            else:
+                stateImage = indigo.kStateImageSel.SensorOff
+            device.updateStateImageOnServer(stateImage)
 
     #---------------------------------------------------------------------------
     def _updateDevice_PowerSupply(self, device):
